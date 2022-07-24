@@ -103,5 +103,5 @@ theme: next
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: 'git'
-  repository: https://github.com/chnhs/chnhs.github.io.git
+  repository: git@github.com:chnhs/chnhs.github.io.git
   branch: master
