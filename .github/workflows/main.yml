@@ -10,24 +10,32 @@ jobs:
     steps:
       - name: Checkout Repository master branch
         uses: actions/checkout@master 
-        
-      - name: Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@v1
+
+      - name: Setup Node.js 14.x 
+        uses: actions/setup-node@master
         with:
-          version: ${{ matrix.node_version }}
-      - name: Setup hexo
+          node-version: "14.x"
+  
+      - name: Setup Hexo Dependencies
+        run: |
+          npm install hexo-cli -g
+          npm install
+
+      - name: Setup hexo private key
         env:
-          ACTION_DEPLOY_KEY: ${{ secrets.HEXO_DEPLOY_PRI }}
+          HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.HEXO_DEPLOY_PRI }}
         run: |
           mkdir -p ~/.ssh/
-          echo "$ACTION_DEPLOY_KEY" > ~/.ssh/id_rsa
+          echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           git config --global user.email "tjuhuangshuai@163.com"
           git config --global user.name "huangshuai"
           npm install hexo-cli -g
           npm install
+      
       - name: Hexo deploy
         run: |
           hexo clean
-          hexo d
+          hexo generate 
+          hexo deploy
