@@ -11,10 +11,20 @@ jobs:
       - name: Checkout Repository master branch
         uses: actions/checkout@master 
 
-      - name: Setup Node.js 14.x 
+      # from: https://github.com/actions/setup-node  
+      - name: Setup Node.js 16.x 
         uses: actions/setup-node@master
         with:
-          node-version: "14.x"
+          node-version: "16.14.0"
+      
+      - name: Cache node modules
+        uses: actions/cache@v1    # 缓存node_modules，避免每次跑action都要重新下载
+        id: cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
   
       - name: Setup Hexo Dependencies
         run: |
@@ -28,7 +38,6 @@ jobs:
           mkdir -p ~/.ssh/
           echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          cat ~/.ssh/id_rsa 
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           git config --global user.email "tjuhuangshuai@163.com"
           git config --global user.name "huangshuai"
