@@ -1,0 +1,37 @@
+anguage: node_js
+
+node_js: stable
+
+cache:
+  directories:
+  - node_modules
+before_install:
+
+  - npm install -g hexo-cli
+
+install:
+  - npm install
+
+script:
+  - hexo g 
+
+after_script:
+  - cd ./public
+  - git init
+  - git config user.name "huangshuai"
+  - git config user.email "tjuhuangshuai@163.com"
+  - git add .
+  - git commit -m "TravisCI 自动部署"
+  # Github Pages
+  - git push --force --quiet "https://${githubblog}@${GH_REF}" master:master
+
+env:
+  global:
+    - GH_REF: github.com/chnhs/chnhs.github.io.git
+  
+notifications:
+  email:
+    - 2662419405@qq.com
+    - qq2662419405@163.com
+  on_success: change
+  on_failure: always
